@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistema Biomédico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+
+<a href="/logout" class="btn btn-danger mb-3">Cerrar sesión</a>
+
+<h1 class="mb-4">Inventario Biomédico</h1>
+
+<h4>Registrar equipo</h4>
+
+<form action="/agregar" method="post" class="row g-3 mb-4">
+    <div class="col-md-2">
+        <input class="form-control" name="codigo" placeholder="Código">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="nombre" placeholder="Nombre">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="serial" placeholder="Serial">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="ubicacion" placeholder="Ubicación">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="marca" placeholder="Marca">
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" name="estado" placeholder="Estado">
+    </div>
+    <div class="col-md-3">
+        <input class="form-control" name="mantenimiento" placeholder="Mantenimiento">
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary">Guardar</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Serial</th>
+            <th>Ubicación</th>
+            <th>Marca</th>
+            <th>Estado</th>
+            <th>Mantenimiento</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for e in equipos %}
+        <tr>
+            <td>{{ e.codigo }}</td>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.serial }}</td>
+            <td>{{ e.ubicacion }}</td>
+            <td>{{ e.marca }}</td>
+            <td>{{ e.estado }}</td>
+            <td>{{ e.mantenimiento }}</td>
+            <td>
+                <a class="btn btn-warning btn-sm" href="/editar/{{ e.codigo }}">Editar</a>
+                <a class="btn btn-danger btn-sm" href="/eliminar/{{ e.codigo }}">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

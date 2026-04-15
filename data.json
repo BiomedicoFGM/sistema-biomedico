@@ -1,0 +1,20 @@
+[
+    {
+        "codigo": "FONE01",
+        "nombre": "Fonendoscopio",
+        "serial": "32323",
+        "ubicacion": "Consultorio 310-3",
+        "marca": "GMD",
+        "estado": "Activo",
+        "mantenimiento": "Anual"
+    },
+    {
+        "codigo": "TENS01",
+        "nombre": "Tensiometro",
+        "serial": "85756",
+        "ubicacion": "Consultorio 310-2",
+        "marca": "Welch Allyn",
+        "estado": "Activo",
+        "mantenimiento": "Anual"
+    }
+]
