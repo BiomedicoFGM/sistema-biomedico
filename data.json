@@ -6,15 +6,74 @@
         "ubicacion": "Consultorio 310-3",
         "marca": "GMD",
         "estado": "Activo",
-        "mantenimiento": "Anual"
+        "mantenimiento": "Anual",
+        "modelo": "Welch Allyn",
+        "serie": "NR",
+        "clase": "I",
+        "invima": "2023DM-651232",
+        "fecha_compra": "2026-03-03",
+        "proveedor": "Tecnomedicas",
+        "fecha_instalacion": "2026-04-07",
+        "frecuencia_mantenimiento": "Anual",
+        "ultimo_mantenimiento": "",
+        "proximo_mantenimiento": "2027-04-01",
+        "metrologia": "No",
+        "frecuencia_metrologia": "N/A",
+        "observaciones": "",
+        "alerta": "gris",
+        "alerta_metro": "no_aplica"
     },
     {
-        "codigo": "TENS01",
+        "codigo": "FONE-06",
+        "nombre": "Fonendoscopio",
+        "marca": "GMD",
+        "modelo": "OIS300",
+        "serie": "NR",
+        "ubicacion": "Consultorio 310-1",
+        "clase": "I",
+        "invima": "2024DM-0087654",
+        "fecha_compra": "2026-04-13",
+        "proveedor": "Tecnomedicas",
+        "fecha_instalacion": "2026-04-14",
+        "frecuencia_mantenimiento": "Anual",
+        "ultimo_mantenimiento": "2026-04-14",
+        "proximo_mantenimiento": "2027-04-20",
+        "metrologia": "No",
+        "frecuencia_metrologia": "No",
+        "observaciones": "Equipo Nuevo",
+        "alerta": "gris",
+        "alerta_metro": "no_aplica"
+    },
+    {
+        "codigo": "TENS-02",
         "nombre": "Tensiometro",
-        "serial": "85756",
-        "ubicacion": "Consultorio 310-2",
-        "marca": "Welch Allyn",
-        "estado": "Activo",
-        "mantenimiento": "Anual"
+        "marca": "ALPK 2",
+        "modelo": "NR",
+        "serie": "438765",
+        "ubicacion": "Atenci\u00f3n prioritaria Cons 1",
+        "clase": "IIB",
+        "invima": "2019DM-873214",
+        "fecha_compra": "2024-03-12",
+        "proveedor": "Tecnomedica",
+        "fecha_instalacion": "2024-03-22",
+        "frecuencia_mantenimiento": "Anual",
+        "ultimo_mantenimiento": "2025-03-19",
+        "proximo_mantenimiento": "2026-04-01",
+        "metrologia": "Si",
+        "frecuencia_metrologia": "12",
+        "observaciones": "",
+        "alerta": "gris",
+        "alerta_metro": "gris",
+        "ultima_calibracion": "2026-03-18",
+        "historial": [
+            {
+                "tipo": "mantenimiento",
+                "fecha": "2025-03-19"
+            },
+            {
+                "tipo": "calibracion",
+                "fecha": "2026-03-18"
+            }
+        ]
     }
 ]
