@@ -1,16 +1,23 @@
 from flask import Flask, render_template, request, redirect, session, send_from_directory
 import json
 import os
+import shutil
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from werkzeug.utils import secure_filename
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, "data.json")
+BACKUP_FOLDER = os.path.join(BASE_DIR, "backups")
+
+os.makedirs(BACKUP_FOLDER, exist_ok=True)
+
 # ------------------ CONFIGURACIÓN ------------------
 
 app = Flask(__name__)
-app.secret_key = "clave_secreta"
+app.secret_key = os.environ.get("SECRET_KEY", "super_clave_local")
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -22,11 +29,12 @@ PASSWORD = "1234"
 # ------------------ DATOS ------------------
 
 def cargar_datos():
+    
     try:
-        with open("data.json", "r") as archivo:
-            equipos = json.load(archivo)
+        with open(DATA_FILE, "r") as archivo:
+            return json.load(archivo)
     except:
-        equipos = []
+        return []
 
     hoy = datetime.today().date()
 
@@ -89,8 +97,20 @@ def cargar_datos():
 
 
 def guardar_datos(equipos):
-    with open("data.json", "w") as archivo:
+
+    # 💾 Guardar principal
+    with open(DATA_FILE, "w") as archivo:
         json.dump(equipos, archivo, indent=4)
+
+    # 🧠 Backup
+    from datetime import datetime
+    import shutil
+
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    backup_nombre = os.path.join(BACKUP_FOLDER, f"backup_{fecha}.json")
+
+    if not os.path.exists(backup_nombre):
+        shutil.copy(DATA_FILE, backup_nombre)
 
 
 # ------------------ LOGIN ------------------
@@ -148,10 +168,40 @@ def inicio():
 
 @app.route("/agregar", methods=["POST"])
 def agregar():
+    if "usuario" not in session:
+        return redirect("/login")
+
     equipos = cargar_datos()
 
-    nuevo = dict(request.form)
-    nuevo["codigo"] = request.form["codigo"].upper()
+    codigo = request.form.get("codigo", "").strip().upper()
+
+    # 🚨 VALIDACIÓN
+    if not codigo:
+        return "El código es obligatorio"
+
+    for e in equipos:
+        if e.get("codigo") == codigo:
+            return "Ese código ya existe ⚠️"
+
+    nuevo = {
+        "codigo": codigo,
+        "nombre": request.form.get("nombre", ""),
+        "marca": request.form.get("marca", ""),
+        "modelo": request.form.get("modelo", ""),
+        "serie": request.form.get("serie", ""),
+        "ubicacion": request.form.get("ubicacion", ""),
+        "clase": request.form.get("clase", ""),
+        "invima": request.form.get("invima", ""),
+        "fecha_compra": request.form.get("fecha_compra", ""),
+        "proveedor": request.form.get("proveedor", ""),
+        "fecha_instalacion": request.form.get("fecha_instalacion", ""),
+        "frecuencia_mantenimiento": int(request.form.get("frecuencia_mantenimiento") or 0),
+        "ultimo_mantenimiento": request.form.get("ultimo_mantenimiento", ""),
+        "metrologia": request.form.get("metrologia", "No"),
+        "frecuencia_metrologia": int(request.form.get("frecuencia_metrologia") or 0),
+        "ultima_calibracion": request.form.get("ultima_calibracion", ""),
+        "observaciones": request.form.get("observaciones", "")
+    }
 
     equipos.append(nuevo)
     guardar_datos(equipos)
@@ -228,22 +278,38 @@ def historial(codigo):
 @app.route("/subir_certificado/<codigo>/<int:index>", methods=["POST"])
 def subir_certificado(codigo, index):
 
+    if "usuario" not in session:
+        return redirect("/login")
+
     equipos = cargar_datos()
-    archivo = request.files["archivo"]
+    archivo = request.files.get("archivo")
 
-    if archivo:
-        nombre = secure_filename(archivo.filename)
-        ruta = os.path.join(app.config["UPLOAD_FOLDER"], nombre)
-        archivo.save(ruta)
+    if not archivo or archivo.filename == "":
+        return "No se seleccionó archivo"
 
-        for e in equipos:
-            if e.get("codigo") == codigo:
-                e["historial"][index]["archivo"] = nombre
+    # 🔐 Validar tipo de archivo
+    if not archivo.filename.lower().endswith((".pdf", ".jpg", ".png")):
+        return "Formato no permitido (solo PDF, JPG, PNG)"
 
-        guardar_datos(equipos)
+    # 🕒 Nombre único
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    nombre_archivo = f"{codigo}_{timestamp}_{secure_filename(archivo.filename)}"
+    ruta = os.path.join(app.config["UPLOAD_FOLDER"], nombre_archivo)
+
+    archivo.save(ruta)
+
+    # 🔄 Guardar en historial
+    for e in equipos:
+        if e.get("codigo") == codigo:
+
+            if "historial" in e and len(e["historial"]) > index:
+                e["historial"][index]["archivo"] = nombre_archivo
+
+    guardar_datos(equipos)
 
     return redirect(f"/historial/{codigo}")
-
 
 @app.route("/uploads/<filename>")
 def descargar_archivo(filename):

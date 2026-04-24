@@ -1,4 +1,4 @@
-Flask
-gunicorn
-python-dateutil
-reportlab
+Flask==3.0.3
+gunicorn==23.0.0
+python-dateutil==2.9.0
+reportlab==4.2.0
