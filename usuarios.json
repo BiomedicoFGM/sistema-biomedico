@@ -1,0 +1,6 @@
+[
+    {
+        "usuario": "Admin",
+        "password": "scrypt:32768:8:1$ACc6tf6qr8yKWBok$8b500a1ed8dbac0503e751d93f6911df3e0b8b84942736c1e0cff65cfdcc76be664599a9b5db0a41aa0e38cbc5a21ac2f6481e0a1cbc727e6e9a729297e4d36a"
+    }
+]

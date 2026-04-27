@@ -116,17 +116,7 @@
         "ultimo_mantenimiento": "2025-01-15",
         "metrologia": "Si",
         "frecuencia_metrologia": "12",
-        "ultima_calibracion": "2026-02-02",
-        "observaciones": "",
-        "proximo_mantenimiento": "2026-01-15",
-        "alerta": "rojo",
-        "proximo_metrologia": "2026-01-08",
-        "alerta_metro": "rojo",
-        "historial": [
-            {
-                "tipo": "calibracion",
-                "fecha": "2026-02-02"
-            }
-        ]
+        "ultima_calibracion": "2025-01-08",
+        "observaciones": ""
     }
 ]
