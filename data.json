@@ -1,98 +1,245 @@
-[
-    {
-        "codigo": "FONE01",
-        "nombre": "Fonendoscopio",
-        "serial": "32323",
-        "ubicacion": "Consultorio 310-3",
-        "marca": "GMD",
-        "estado": "Activo",
-        "mantenimiento": "Anual",
-        "modelo": "Welch Allyn",
-        "serie": "NR",
-        "clase": "I",
-        "invima": "2023DM-651232",
-        "fecha_compra": "2026-03-03",
-        "proveedor": "Tecnomedicas",
-        "fecha_instalacion": "2026-04-07",
-        "frecuencia_mantenimiento": "Anual",
-        "ultimo_mantenimiento": "",
-        "proximo_mantenimiento": "2027-04-01",
-        "metrologia": "No",
-        "frecuencia_metrologia": "N/A",
-        "observaciones": "",
-        "alerta": "gris",
-        "alerta_metro": "no_aplica"
-    },
-    {
-        "codigo": "FONE-06",
-        "nombre": "Fonendoscopio",
-        "marca": "GMD",
-        "modelo": "OIS300",
-        "serie": "NR",
-        "ubicacion": "Consultorio 310-1",
-        "clase": "I",
-        "invima": "2024DM-0087654",
-        "fecha_compra": "2026-04-13",
-        "proveedor": "Tecnomedicas",
-        "fecha_instalacion": "2026-04-14",
-        "frecuencia_mantenimiento": "Anual",
-        "ultimo_mantenimiento": "2026-04-14",
-        "proximo_mantenimiento": "2027-04-20",
-        "metrologia": "No",
-        "frecuencia_metrologia": "No",
-        "observaciones": "Equipo Nuevo",
-        "alerta": "gris",
-        "alerta_metro": "no_aplica"
-    },
-    {
-        "codigo": "TENS-02",
-        "nombre": "Tensiometro",
-        "marca": "ALPK 2",
-        "modelo": "NR",
-        "serie": "438765",
-        "ubicacion": "Atenci\u00f3n prioritaria Cons 1",
-        "clase": "IIB",
-        "invima": "2019DM-873214",
-        "fecha_compra": "2024-03-12",
-        "proveedor": "Tecnomedica",
-        "fecha_instalacion": "2024-03-22",
-        "frecuencia_mantenimiento": "Anual",
-        "ultimo_mantenimiento": "2025-03-19",
-        "proximo_mantenimiento": "2026-04-01",
-        "metrologia": "Si",
-        "frecuencia_metrologia": "12",
-        "observaciones": "",
-        "alerta": "gris",
-        "alerta_metro": "gris",
-        "ultima_calibracion": "2026-03-18",
-        "historial": [
-            {
-                "tipo": "mantenimiento",
-                "fecha": "2025-03-19"
-            },
-            {
-                "tipo": "calibracion",
-                "fecha": "2026-03-18"
-            }
-        ]
-    },
-    {
-        "codigo": "TERM02",
-        "nombre": "Termometro",
-        "marca": "Govee",
-        "modelo": "H5151",
-        "serie": "HG5150909",
-        "ubicacion": "Congelador",
-        "clase": "I",
-        "invima": "N/A",
-        "fecha_compra": "2026-01-01",
-        "proveedor": "Inmetrical",
-        "fecha_instalacion": "2026-01-15",
-        "frecuencia_mantenimiento": 12,
-        "ultimo_mantenimiento": "2026-01-15",
-        "metrologia": "Si",
-        "frecuencia_metrologia": 12,
-        "ultima_calibracion": "2026-01-06",
-        "observaciones": "Verificar Mantenimiento"
-    }
-]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistema Biomédico</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .table td, .table th {
+            font-size: 13px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+
+<body class="container mt-4">
+
+<a href="/logout" class="btn btn-danger mb-3">Cerrar sesión</a>
+
+<h1 class="mb-4">Inventario Biomédico</h1>
+
+<a href="/cronograma" class="btn btn-primary mb-3">📅 Ver cronograma</a>
+
+<!-- 🔧 DASHBOARD -->
+<h4>🔧 Mantenimiento</h4>
+
+<div class="row mb-4 text-center">
+    <div class="col"><div class="alert alert-danger">🔴 {{ rojos }}<br>Vencidos</div></div>
+    <div class="col"><div class="alert alert-warning">🟡 {{ amarillos }}<br>Próximos</div></div>
+    <div class="col"><div class="alert alert-success">🟢 {{ verdes }}<br>Al día</div></div>
+    <div class="col"><div class="alert alert-secondary">⚪ {{ grises }}<br>Sin fecha</div></div>
+</div>
+
+<h4>📏 Metrología</h4>
+
+<div class="row mb-4 text-center">
+    <div class="col"><div class="alert alert-danger">🔴 {{ rojos_m }}<br>Vencidos</div></div>
+    <div class="col"><div class="alert alert-warning">🟡 {{ amarillos_m }}<br>Próximos</div></div>
+    <div class="col"><div class="alert alert-success">🟢 {{ verdes_m }}<br>Al día</div></div>
+</div>
+
+<!-- 🔥 FORMULARIO -->
+<h4>Registrar equipo</h4>
+
+<form action="/agregar" method="post" class="row g-3 mb-4">
+
+    <div class="col-md-2">
+        <label>Código</label>
+        <input class="form-control" name="codigo">
+    </div>
+
+    <div class="col-md-3">
+        <label>Nombre</label>
+        <input class="form-control" name="nombre">
+    </div>
+
+    <div class="col-md-2">
+        <label>Marca</label>
+        <input class="form-control" name="marca">
+    </div>
+
+    <div class="col-md-2">
+        <label>Modelo</label>
+        <input class="form-control" name="modelo">
+    </div>
+
+    <div class="col-md-2">
+        <label>Serie</label>
+        <input class="form-control" name="serie">
+    </div>
+
+    <div class="col-md-3">
+        <label>Ubicación</label>
+        <input class="form-control" name="ubicacion">
+    </div>
+
+    <div class="col-md-2">
+        <label>Clase</label>
+        <input class="form-control" name="clase">
+    </div>
+
+    <div class="col-md-3">
+        <label>INVIMA / Registro</label>
+        <input class="form-control" name="invima">
+    </div>
+
+    <div class="col-md-2">
+        <label>Fecha compra</label>
+        <input type="date" class="form-control" name="fecha_compra">
+    </div>
+
+    <div class="col-md-3">
+        <label>Proveedor</label>
+        <input class="form-control" name="proveedor">
+    </div>
+
+    <div class="col-md-2">
+        <label>Fecha instalación</label>
+        <input type="date" class="form-control" name="fecha_instalacion">
+    </div>
+
+    <!-- 🔧 MANTENIMIENTO -->
+    <div class="col-md-2">
+        <label>Frecuencia mantenimiento (meses)</label>
+        <input class="form-control" name="frecuencia_mantenimiento">
+    </div>
+
+    <div class="col-md-2">
+        <label>Último mantenimiento</label>
+        <input type="date" class="form-control" name="ultimo_mantenimiento">
+    </div>
+
+    <!-- 📏 METROLOGÍA -->
+    <div class="col-md-2">
+        <label>¿Aplica metrología?</label>
+        <select name="metrologia" class="form-control">
+            <option value="No">No aplica</option>
+            <option value="Si">Sí aplica</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label>Frecuencia metrología (meses)</label>
+        <input class="form-control" name="frecuencia_metrologia">
+    </div>
+
+    <div class="col-md-2">
+        <label>Última calibración</label>
+        <input type="date" class="form-control" name="ultima_calibracion">
+    </div>
+
+    <!-- 📝 -->
+    <div class="col-md-4">
+        <label>Observaciones</label>
+        <input class="form-control" name="observaciones">
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary">Guardar</button>
+    </div>
+
+</form>
+
+<!-- 🔥 TABLA -->
+<div class="table-responsive">
+<table class="table table-bordered table-striped">
+
+    <thead class="table-dark">
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Serie</th>
+            <th>Ubicación</th>
+            <th>Clase</th>
+            <th>INVIMA</th>
+            <th>Compra</th>
+            <th>Proveedor</th>
+            <th>Instalación</th>
+            <th>Frec Mant</th>
+            <th>Último Mant</th>
+            <th>Metrología</th>
+            <th>Frec Metro</th>
+            <th>Última Cal</th>
+            <th>Estado</th>
+            <th>Observaciones</th>
+            <th>Historial</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for e in equipos %}
+        <tr class="
+        {% if e.alerta == 'rojo' %}table-danger
+        {% elif e.alerta == 'amarillo' %}table-warning
+        {% elif e.alerta == 'verde' %}table-success
+        {% else %}table-secondary
+        {% endif %}
+        ">
+
+            <td>{{ e.codigo }}</td>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.marca }}</td>
+            <td>{{ e.modelo }}</td>
+            <td>{{ e.serie }}</td>
+            <td>{{ e.ubicacion }}</td>
+            <td>{{ e.clase }}</td>
+            <td>{{ e.invima }}</td>
+            <td>{{ e.fecha_compra }}</td>
+            <td>{{ e.proveedor }}</td>
+            <td>{{ e.fecha_instalacion }}</td>
+            <td>{{ e.frecuencia_mantenimiento }}</td>
+            <td>{{ e.ultimo_mantenimiento }}</td>
+            <td>{{ e.metrologia }}</td>
+            <td>{{ e.frecuencia_metrologia }}</td>
+            <td>{{ e.ultima_calibracion }}</td>
+
+            <td>
+                {% if e.alerta_metro == 'rojo' %} 🔴
+                {% elif e.alerta_metro == 'amarillo' %} 🟡
+                {% elif e.alerta_metro == 'verde' %} 🟢
+                {% elif e.alerta_metro == 'no_aplica' %} ⚪
+                {% else %} ⚫
+                {% endif %}
+            </td>
+
+            <td>{{ e.observaciones }}</td>
+
+            <td>
+                {% if e.historial %}
+                    {% for h in e.historial[-3:] %}
+                        {% if h.tipo == 'mantenimiento' %}
+                            🔧 {{ h.fecha }}<br>
+                        {% elif h.tipo == 'calibracion' %}
+                            📏 {{ h.fecha }}<br>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+            <td>
+                <a class="btn btn-warning btn-sm" href="/editar/{{ e.codigo }}">Editar</a>
+                <a class="btn btn-danger btn-sm" href="/eliminar/{{ e.codigo }}">Eliminar</a>
+                <a class="btn btn-info btn-sm" href="/historial/{{ e.codigo }}">Historial</a>
+                <a class="btn btn-dark btn-sm" href="/reporte/{{ e.codigo }}">PDF</a>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+</div>
+
+</body>
+</html>

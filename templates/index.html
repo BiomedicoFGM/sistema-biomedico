@@ -1,13 +1,20 @@
-<style>
-.table td, .table th {
-    font-size: 13px;
-}
-</style>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Sistema Biomédico</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+    .table td, .table th {
+    font-size: 13px;
+    }
+
+    .form-label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    }
+</style>
 </head>
 
 <body class="container mt-4">
@@ -15,6 +22,7 @@
 <a href="/logout" class="btn btn-danger mb-3">Cerrar sesión</a>
 
 <h1 class="mb-4">Inventario Biomédico</h1>
+
 <a href="/cronograma" class="btn btn-primary mb-3">📅 Ver cronograma</a>
 
 <!-- 🔧 DASHBOARD -->
@@ -41,60 +49,74 @@
 <form action="/agregar" method="post" class="row g-3 mb-4">
 
     <div class="col-md-2">
-        <input class="form-control" name="codigo" placeholder="Código">
+        <label class="form-label">Código</label>
+        <input class="form-control" name="codigo">
     </div>
 
     <div class="col-md-3">
-        <input class="form-control" name="nombre" placeholder="Nombre">
+        <label class="form-label">Nombre</label>
+        <input class="form-control" name="nombre">
     </div>
 
     <div class="col-md-2">
-        <input class="form-control" name="marca" placeholder="Marca">
+        <label class="form-label">Marca</label>
+        <input class="form-control" name="marca">
     </div>
 
     <div class="col-md-2">
-        <input class="form-control" name="modelo" placeholder="Modelo">
+        <label class="form-label">Modelo</label>
+        <input class="form-control" name="modelo">
     </div>
 
     <div class="col-md-2">
-        <input class="form-control" name="serie" placeholder="Serie">
+        <label class="form-label">Serie</label>
+        <input class="form-control" name="serie">
     </div>
 
     <div class="col-md-3">
-        <input class="form-control" name="ubicacion" placeholder="Ubicación">
+        <label class="form-label">Ubicación</label>
+        <input class="form-control" name="ubicacion">
     </div>
 
     <div class="col-md-2">
-        <input class="form-control" name="clase" placeholder="Clase">
+        <label class="form-label">Clase</label>
+        <input class="form-control" name="clase">
     </div>
 
     <div class="col-md-3">
-        <input class="form-control" name="invima" placeholder="INVIMA">
+        <label class="form-label">INVIMA / Registro</label>
+        <input class="form-control" name="invima">
     </div>
 
     <div class="col-md-2">
+        <label class="form-label">Fecha compra</label>
         <input type="date" class="form-control" name="fecha_compra">
     </div>
 
     <div class="col-md-3">
-        <input class="form-control" name="proveedor" placeholder="Proveedor">
+        <label class="form-label">Proveedor</label>
+        <input class="form-control" name="proveedor">
     </div>
 
     <div class="col-md-2">
+        <label class="form-label">Fecha instalación</label>
         <input type="date" class="form-control" name="fecha_instalacion">
     </div>
 
     <!-- 🔧 MANTENIMIENTO -->
     <div class="col-md-2">
-        <input class="form-control" name="frecuencia_mantenimiento" placeholder="Frec mant (meses)">
+        <label class="form-label">Frecuencia mant (meses)</label>
+        <input class="form-control" name="frecuencia_mantenimiento">
     </div>
 
     <div class="col-md-2">
+        <label class="form-label">Último mantenimiento</label>
         <input type="date" class="form-control" name="ultimo_mantenimiento">
     </div>
 
-    <!-- 📏 METROLOGÍA (CORREGIDO) -->
+    <!-- 📏 METROLOGÍA -->
     <div class="col-md-2">
+        <label class="form-label">¿Aplica metrología?</label>
         <select name="metrologia" class="form-control">
             <option value="No">No aplica</option>
             <option value="Si">Sí aplica</option>
@@ -102,16 +124,19 @@
     </div>
 
     <div class="col-md-2">
-        <input class="form-control" name="frecuencia_metrologia" placeholder="Frec metro (meses)">
+        <label class="form-label">Frec metro (meses)</label>
+        <input class="form-control" name="frecuencia_metrologia">
     </div>
 
     <div class="col-md-2">
+        <label class="form-label">Última calibración</label>
         <input type="date" class="form-control" name="ultima_calibracion">
     </div>
 
-    <!-- 📝 OBSERVACIONES -->
+    <!-- 📝 -->
     <div class="col-md-4">
-        <input class="form-control" name="observaciones" placeholder="Observaciones">
+        <label class="form-label">Observaciones</label>
+        <input class="form-control" name="observaciones">
     </div>
 
     <div class="col-12">
@@ -142,7 +167,7 @@
             <th>Metrología</th>
             <th>Frec Metro</th>
             <th>Última Cal</th>
-            <th>Estado Metrología</th>
+            <th>Estado</th>
             <th>Observaciones</th>
             <th>Historial</th>
             <th>Acciones</th>
@@ -176,7 +201,6 @@
             <td>{{ e.frecuencia_metrologia }}</td>
             <td>{{ e.ultima_calibracion }}</td>
 
-            <!-- 📏 ESTADO METROLOGÍA -->
             <td>
                 {% if e.alerta_metro == 'rojo' %} 🔴
                 {% elif e.alerta_metro == 'amarillo' %} 🟡
@@ -188,7 +212,6 @@
 
             <td>{{ e.observaciones }}</td>
 
-            <!-- 📜 HISTORIAL -->
             <td>
                 {% if e.historial %}
                     {% for h in e.historial[-3:] %}
@@ -203,7 +226,6 @@
                 {% endif %}
             </td>
 
-            <!-- ⚙️ ACCIONES -->
             <td>
                 <a class="btn btn-warning btn-sm" href="/editar/{{ e.codigo }}">Editar</a>
                 <a class="btn btn-danger btn-sm" href="/eliminar/{{ e.codigo }}">Eliminar</a>
