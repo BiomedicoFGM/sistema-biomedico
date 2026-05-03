@@ -3,32 +3,47 @@
 <head>
     <title>Cronograma</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .badge-mant { background-color: #0d6efd; }
+        .badge-cal { background-color: #198754; }
+    </style>
 </head>
 
 <body class="container mt-4">
 
-<h2>📅 Cronograma de mantenimiento y calibración</h2>
-
-<a href="/" class="btn btn-secondary mb-3">⬅ Volver</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>📅 Cronograma</h2>
+    <div>
+        <a href="/" class="btn btn-secondary">⬅ Volver</a>
+        <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+    </div>
+</div>
 
 <!-- 🔎 FILTROS -->
 <form method="get" class="row g-3 mb-4">
 
     <div class="col-md-3">
-        <input type="month" name="mes" class="form-control">
+        <label class="form-label">Mes</label>
+        <input type="month" name="mes" value="{{ request.args.get('mes','') }}" class="form-control">
     </div>
 
     <div class="col-md-3">
-        <input name="ubicacion" class="form-control" placeholder="Filtrar por ubicación">
+        <label class="form-label">Ubicación</label>
+        <input name="ubicacion"
+               value="{{ request.args.get('ubicacion','') }}"
+               class="form-control"
+               placeholder="Ej: UCI, Consulta externa">
     </div>
 
-    <div class="col-md-2">
-        <button class="btn btn-primary">Filtrar</button>
+    <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-primary w-100">Filtrar</button>
     </div>
 
 </form>
 
 <!-- 📊 TABLA -->
+<div class="table-responsive">
 <table class="table table-bordered table-striped">
 
     <thead class="table-dark">
@@ -42,24 +57,37 @@
     </thead>
 
     <tbody>
-        {% for e in eventos %}
-        <tr>
-            <td>{{ e.codigo }}</td>
-            <td>{{ e.nombre }}</td>
-            <td>
-                {% if e.tipo == "Mantenimiento" %}
-                    🔧 {{ e.tipo }}
-                {% else %}
-                    📏 {{ e.tipo }}
-                {% endif %}
-            </td>
-            <td>{{ e.fecha }}</td>
-            <td>{{ e.ubicacion }}</td>
-        </tr>
-        {% endfor %}
+
+        {% if eventos %}
+            {% for e in eventos %}
+            <tr>
+                <td>{{ e.codigo }}</td>
+                <td>{{ e.nombre }}</td>
+
+                <td>
+                    {% if e.tipo == "Mantenimiento" %}
+                        <span class="badge badge-mant">🔧 Mantenimiento</span>
+                    {% else %}
+                        <span class="badge badge-cal">📏 Calibración</span>
+                    {% endif %}
+                </td>
+
+                <td>{{ e.fecha }}</td>
+                <td>{{ e.ubicacion or '-' }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No hay eventos para los filtros seleccionados
+                </td>
+            </tr>
+        {% endif %}
+
     </tbody>
 
 </table>
+</div>
 
 </body>
 </html>

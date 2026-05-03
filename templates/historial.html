@@ -18,9 +18,9 @@
 
 <div class="mb-4">
     <strong>Código:</strong> {{ equipo.codigo }} <br>
-    <strong>Nombre:</strong> {{ equipo.nombre }} <br>
-    <strong>Marca:</strong> {{ equipo.marca }} <br>
-    <strong>Modelo:</strong> {{ equipo.modelo }}
+    <strong>Nombre:</strong> {{ equipo.nombre or "-" }} <br>
+    <strong>Marca:</strong> {{ equipo.marca or "-" }} <br>
+    <strong>Modelo:</strong> {{ equipo.modelo or "-" }}
 </div>
 
 <!-- 📊 TABLA HISTORIAL -->
@@ -28,69 +28,70 @@
 
 <table class="table table-bordered table-striped">
 
-    <thead class="table-dark">
-        <tr>
-            <th>Tipo</th>
-            <th>Fecha</th>
-            <th>Certificado</th>
-        </tr>
-    </thead>
+<thead class="table-dark">
+<tr>
+    <th>Tipo</th>
+    <th>Fecha</th>
+    <th>Certificado</th>
+</tr>
+</thead>
 
-    <tbody>
+<tbody>
 
-        {% if equipo.historial %}
-        
-            {% for h in equipo.historial|reverse %}
-            <tr>
+{% if historial and historial|length > 0 %}
 
-                <!-- 🔧 TIPO -->
-                <td>
-                    {% if h.tipo == 'mantenimiento' %}
-                        🔧 Mantenimiento
-                    {% elif h.tipo == 'calibracion' %}
-                        📏 Calibración
-                    {% endif %}
-                </td>
+    {% for h in historial %}
+    <tr>
 
-                <!-- 📅 FECHA -->
-                <td>{{ h.fecha }}</td>
+        <!-- 🔧 TIPO -->
+        <td>
+            {% if h.tipo == 'mantenimiento' %}
+                🔧 Mantenimiento
+            {% elif h.tipo == 'calibracion' %}
+                📏 Calibración
+            {% else %}
+                -
+            {% endif %}
+        </td>
 
-                <!-- 📎 CERTIFICADO -->
-                <td>
+        <!-- 📅 FECHA -->
+        <td>{{ h.fecha or "-" }}</td>
 
-                    <!-- VER -->
-                    {% if h.archivo %}
-                        <a class="btn btn-success btn-sm"
-                           href="/uploads/{{ h.archivo }}" target="_blank">
-                           Ver PDF
-                        </a>
-                    {% else %}
-                        <span class="text-muted">Sin archivo</span>
-                    {% endif %}
+        <!-- 📎 CERTIFICADO -->
+        <td>
 
-                    <!-- SUBIR -->
-                    <form action="/subir_certificado/{{ equipo.codigo }}/{{ loop.revindex0 }}"
-                          method="post"
-                          enctype="multipart/form-data"
-                          class="mt-2">
+            {% if h.archivo %}
+                <a class="btn btn-success btn-sm"
+                   href="/uploads/{{ h.archivo }}" target="_blank">
+                   Ver archivo
+                </a>
+            {% else %}
+                <span class="text-muted">Sin archivo</span>
+            {% endif %}
 
-                        <input type="file" name="archivo" class="form-control form-control-sm" required>
-                        <button class="btn btn-primary btn-sm mt-1">Subir</button>
+            <!-- SUBIR -->
+            <form action="/subir_certificado/{{ h.id }}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="mt-2">
 
-                    </form>
+                <input type="file" name="archivo" class="form-control form-control-sm" required>
+                <button class="btn btn-primary btn-sm mt-1">Subir</button>
 
-                </td>
+            </form>
 
-            </tr>
-            {% endfor %}
+        </td>
 
-        {% else %}
-            <tr>
-                <td colspan="3" class="text-center">Sin historial registrado</td>
-            </tr>
-        {% endif %}
+    </tr>
+    {% endfor %}
 
-    </tbody>
+{% else %}
+    <tr>
+        <td colspan="3" class="text-center">Sin historial registrado</td>
+    </tr>
+{% endif %}
+
+</tbody>
 
 </table>
 

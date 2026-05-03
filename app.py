@@ -403,6 +403,181 @@ def editar(codigo):
 
     return render_template("editar.html", equipo=equipo)
 
+@app.route("/cronograma")
+def cronograma():
+    if "usuario" not in session:
+        return redirect("/login")
+
+    equipos = Equipo.query.all()
+    eventos = []
+
+    from datetime import datetime
+    from dateutil.relativedelta import relativedelta
+
+for e in equipos:
+
+    # 🔧 MANTENIMIENTO
+    try:
+        if (
+            e.frecuencia_mantenimiento
+            and e.ultimo_mantenimiento
+            and str(e.ultimo_mantenimiento).strip() != ""
+        ):
+
+            ultimo = datetime.strptime(
+                e.ultimo_mantenimiento,
+                "%Y-%m-%d"
+            ).date()
+
+            proximo = ultimo + relativedelta(
+                months=e.frecuencia_mantenimiento
+            )
+
+            eventos.append({
+                "codigo": e.codigo,
+                "nombre": e.nombre,
+                "tipo": "Mantenimiento",
+                "fecha": proximo.strftime("%Y-%m-%d"),
+                "ubicacion": e.ubicacion
+            })
+
+    except Exception as error:
+        print("Error mantenimiento:", error)
+
+    # 📏 CALIBRACIÓN
+    try:
+        if (
+            (e.metrologia or "").lower() == "si"
+            and e.frecuencia_metrologia
+            and e.ultima_calibracion
+            and str(e.ultima_calibracion).strip() != ""
+        ):
+
+            ultima = datetime.strptime(
+                e.ultima_calibracion,
+                "%Y-%m-%d"
+            ).date()
+
+            proximo = ultima + relativedelta(
+                months=e.frecuencia_metrologia
+            )
+
+            eventos.append({
+                "codigo": e.codigo,
+                "nombre": e.nombre,
+                "tipo": "Calibración",
+                "fecha": proximo.strftime("%Y-%m-%d"),
+                "ubicacion": e.ubicacion
+            })
+
+    except Exception as error:
+        print("Error calibración:", error)
+
+# 🔎 FILTROS
+mes = request.args.get("mes")
+ubicacion = request.args.get("ubicacion")
+
+if mes:
+    eventos = [
+        evento for evento in eventos
+        if evento["fecha"].startswith(mes)
+    ]
+
+if ubicacion:
+    eventos = [
+        evento for evento in eventos
+        if ubicacion.lower() in (evento["ubicacion"] or "").lower()
+    ]
+
+eventos.sort(key=lambda x: x["fecha"])
+
+return render_template(
+    "cronograma.html",
+    eventos=eventos
+)
+    
+@app.route("/reporte/<codigo>")
+def reporte(codigo):
+
+    if "usuario" not in session:
+        return redirect("/login")
+
+    equipo = Equipo.query.filter_by(codigo=codigo).first()
+
+    if not equipo:
+        return "Equipo no encontrado"
+
+    try:
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+        from reportlab.lib.styles import getSampleStyleSheet
+        from reportlab.lib.pagesizes import letter
+
+        # 📁 carpeta reportes
+        carpeta = "/tmp/reportes"
+        os.makedirs(carpeta, exist_ok=True)
+
+        # 🕒 nombre único (evita errores en servidor)
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        archivo = f"reporte_{codigo}_{timestamp}.pdf"
+        ruta = os.path.join(carpeta, archivo)
+
+        # 📄 documento
+        doc = SimpleDocTemplate(ruta, pagesize=letter)
+        styles = getSampleStyleSheet()
+
+        contenido = []
+
+        # 🧾 TÍTULO
+        contenido.append(Paragraph("<b>REPORTE BIOMÉDICO</b>", styles["Title"]))
+        contenido.append(Spacer(1, 12))
+
+        # 📊 DATOS DEL EQUIPO
+        datos = [
+            ("Código", equipo.codigo),
+            ("Nombre", equipo.nombre),
+            ("Marca", equipo.marca),
+            ("Modelo", equipo.modelo),
+            ("Serie", equipo.serie),
+            ("Ubicación", equipo.ubicacion),
+            ("Clase", equipo.clase),
+            ("INVIMA", equipo.invima),
+            ("Fecha compra", equipo.fecha_compra),
+            ("Proveedor", equipo.proveedor),
+            ("Fecha instalación", equipo.fecha_instalacion),
+            ("Frecuencia mantenimiento (meses)", equipo.frecuencia_mantenimiento),
+            ("Último mantenimiento", equipo.ultimo_mantenimiento),
+            ("Metrología", equipo.metrologia),
+            ("Frecuencia metrología (meses)", equipo.frecuencia_metrologia),
+            ("Última calibración", equipo.ultima_calibracion),
+            ("Observaciones", equipo.observaciones),
+        ]
+
+        for k, v in datos:
+            contenido.append(
+                Paragraph(f"<b>{k}:</b> {v if v else '-'}", styles["Normal"])
+            )
+
+        contenido.append(Spacer(1, 12))
+
+        # 🧠 HISTORIAL (preparado para cuando lo migres a DB)
+        if hasattr(equipo, "historiales") and equipo.historiales:
+            contenido.append(Paragraph("<b>Historial</b>", styles["Heading2"]))
+            contenido.append(Spacer(1, 8))
+
+            for h in equipo.historiales:
+                contenido.append(
+                    Paragraph(f"{h.tipo} - {h.fecha}", styles["Normal"])
+                )
+
+        # 🏗 GENERAR PDF
+        doc.build(contenido)
+
+        # 📥 DESCARGA
+        return send_from_directory(carpeta, archivo, as_attachment=True)
+
+    except Exception as e:
+        return f"Error al generar PDF: {str(e)}"
+
 # ------------------ RUN ------------------
 
 if __name__ == "__main__":

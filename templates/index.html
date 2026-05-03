@@ -7,14 +7,14 @@
 
     <style>
     .table td, .table th {
-    font-size: 13px;
+        font-size: 13px;
     }
 
     .form-label {
-    font-weight: 600;
-    margin-bottom: 4px;
+        font-weight: 600;
+        margin-bottom: 4px;
     }
-</style>
+    </style>
 </head>
 
 <body class="container mt-4">
@@ -50,7 +50,7 @@
 
     <div class="col-md-2">
         <label class="form-label">Código</label>
-        <input class="form-control" name="codigo">
+        <input class="form-control" name="codigo" required>
     </div>
 
     <div class="col-md-3">
@@ -84,7 +84,7 @@
     </div>
 
     <div class="col-md-3">
-        <label class="form-label">INVIMA / Registro</label>
+        <label class="form-label">INVIMA</label>
         <input class="form-control" name="invima">
     </div>
 
@@ -103,37 +103,34 @@
         <input type="date" class="form-control" name="fecha_instalacion">
     </div>
 
-    <!-- 🔧 MANTENIMIENTO -->
     <div class="col-md-2">
-        <label class="form-label">Frecuencia mant (meses)</label>
+        <label class="form-label">Frec mant (meses)</label>
         <input class="form-control" name="frecuencia_mantenimiento">
     </div>
 
     <div class="col-md-2">
-        <label class="form-label">Último mantenimiento</label>
+        <label class="form-label">Último mant</label>
         <input type="date" class="form-control" name="ultimo_mantenimiento">
     </div>
 
-    <!-- 📏 METROLOGÍA -->
     <div class="col-md-2">
-        <label class="form-label">¿Aplica metrología?</label>
+        <label class="form-label">Metrología</label>
         <select name="metrologia" class="form-control">
-            <option value="No">No aplica</option>
-            <option value="Si">Sí aplica</option>
+            <option value="No">No</option>
+            <option value="Si">Sí</option>
         </select>
     </div>
 
     <div class="col-md-2">
-        <label class="form-label">Frec metro (meses)</label>
+        <label class="form-label">Frec metro</label>
         <input class="form-control" name="frecuencia_metrologia">
     </div>
 
     <div class="col-md-2">
-        <label class="form-label">Última calibración</label>
+        <label class="form-label">Última cal</label>
         <input type="date" class="form-control" name="ultima_calibracion">
     </div>
 
-    <!-- 📝 -->
     <div class="col-md-4">
         <label class="form-label">Observaciones</label>
         <input class="form-control" name="observaciones">
@@ -149,93 +146,65 @@
 <div class="table-responsive">
 <table class="table table-bordered table-striped">
 
-    <thead class="table-dark">
-        <tr>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Serie</th>
-            <th>Ubicación</th>
-            <th>Clase</th>
-            <th>INVIMA</th>
-            <th>Compra</th>
-            <th>Proveedor</th>
-            <th>Instalación</th>
-            <th>Frec Mant</th>
-            <th>Último Mant</th>
-            <th>Metrología</th>
-            <th>Frec Metro</th>
-            <th>Última Cal</th>
-            <th>Estado</th>
-            <th>Observaciones</th>
-            <th>Historial</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
+<thead class="table-dark">
+<tr>
+    <th>Código</th>
+    <th>Nombre</th>
+    <th>Marca</th>
+    <th>Modelo</th>
+    <th>Ubicación</th>
+    <th>Frec Mant</th>
+    <th>Último Mant</th>
+    <th>Estado</th>
+    <th>Metrología</th>
+    <th>Acciones</th>
+</tr>
+</thead>
 
-    <tbody>
-        {% for e in equipos %}
-        <tr class="
-        {% if e.alerta == 'rojo' %}table-danger
-        {% elif e.alerta == 'amarillo' %}table-warning
-        {% elif e.alerta == 'verde' %}table-success
-        {% else %}table-secondary
-        {% endif %}
-        ">
+<tbody>
+{% for e in equipos %}
+<tr class="
+{% if e.alerta == 'rojo' %}table-danger
+{% elif e.alerta == 'amarillo' %}table-warning
+{% elif e.alerta == 'verde' %}table-success
+{% else %}table-secondary
+{% endif %}
+">
 
-            <td>{{ e.codigo }}</td>
-            <td>{{ e.nombre }}</td>
-            <td>{{ e.marca }}</td>
-            <td>{{ e.modelo }}</td>
-            <td>{{ e.serie }}</td>
-            <td>{{ e.ubicacion }}</td>
-            <td>{{ e.clase }}</td>
-            <td>{{ e.invima }}</td>
-            <td>{{ e.fecha_compra }}</td>
-            <td>{{ e.proveedor }}</td>
-            <td>{{ e.fecha_instalacion }}</td>
-            <td>{{ e.frecuencia_mantenimiento }}</td>
-            <td>{{ e.ultimo_mantenimiento }}</td>
-            <td>{{ e.metrologia }}</td>
-            <td>{{ e.frecuencia_metrologia }}</td>
-            <td>{{ e.ultima_calibracion }}</td>
+<td>{{ e.codigo }}</td>
+<td>{{ e.nombre or "-" }}</td>
+<td>{{ e.marca or "-" }}</td>
+<td>{{ e.modelo or "-" }}</td>
+<td>{{ e.ubicacion or "-" }}</td>
+<td>{{ e.frecuencia_mantenimiento or 0 }}</td>
+<td>{{ e.ultimo_mantenimiento or "-" }}</td>
 
-            <td>
-                {% if e.alerta_metro == 'rojo' %} 🔴
-                {% elif e.alerta_metro == 'amarillo' %} 🟡
-                {% elif e.alerta_metro == 'verde' %} 🟢
-                {% elif e.alerta_metro == 'no_aplica' %} ⚪
-                {% else %} ⚫
-                {% endif %}
-            </td>
+<td>
+{% if e.alerta == 'rojo' %}🔴
+{% elif e.alerta == 'amarillo' %}🟡
+{% elif e.alerta == 'verde' %}🟢
+{% else %}⚪
+{% endif %}
+</td>
 
-            <td>{{ e.observaciones }}</td>
+<td>
+{% if e.alerta_metro == 'rojo' %}🔴
+{% elif e.alerta_metro == 'amarillo' %}🟡
+{% elif e.alerta_metro == 'verde' %}🟢
+{% elif e.alerta_metro == 'no_aplica' %}⚪
+{% else %}⚫
+{% endif %}
+</td>
 
-            <td>
-                {% if e.historial %}
-                    {% for h in e.historial[-3:] %}
-                        {% if h.tipo == 'mantenimiento' %}
-                            🔧 {{ h.fecha }}<br>
-                        {% elif h.tipo == 'calibracion' %}
-                            📏 {{ h.fecha }}<br>
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    -
-                {% endif %}
-            </td>
+<td>
+    <a class="btn btn-warning btn-sm" href="/editar/{{ e.codigo }}">Editar</a>
+    <a class="btn btn-danger btn-sm" href="/eliminar/{{ e.codigo }}">Eliminar</a>
+    <a class="btn btn-dark btn-sm" href="/reporte/{{ e.codigo }}">PDF</a>
+</td>
 
-            <td>
-                <a class="btn btn-warning btn-sm" href="/editar/{{ e.codigo }}">Editar</a>
-                <a class="btn btn-danger btn-sm" href="/eliminar/{{ e.codigo }}">Eliminar</a>
-                <a class="btn btn-info btn-sm" href="/historial/{{ e.codigo }}">Historial</a>
-                <a class="btn btn-dark btn-sm" href="/reporte/{{ e.codigo }}">PDF</a>
-            </td>
-
-        </tr>
-        {% endfor %}
-    </tbody>
+</tr>
+{% endfor %}
+</tbody>
 
 </table>
 </div>
