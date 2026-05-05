@@ -389,12 +389,37 @@ def editar(codigo):
 
     if request.method == "POST":
 
-        # historial básico (opcional)
-        if request.form.get("ultimo_mantenimiento") != equipo.ultimo_mantenimiento:
-            pass
+        # 🔧 historial mantenimiento
+        nuevo_mantenimiento = request.form.get("ultimo_mantenimiento")
 
-        if request.form.get("ultima_calibracion") != equipo.ultima_calibracion:
-            pass
+        if (
+            nuevo_mantenimiento
+            and nuevo_mantenimiento != equipo.ultimo_mantenimiento
+        ):
+
+            historial = Historial(
+                equipo_id=equipo.id,
+                tipo="mantenimiento",
+                fecha=nuevo_mantenimiento
+            )
+
+            db.session.add(historial)
+
+        # 📏 historial calibración
+        nueva_calibracion = request.form.get("ultima_calibracion")
+
+        if (
+            nueva_calibracion
+            and nueva_calibracion != equipo.ultima_calibracion
+        ):
+
+            historial = Historial(
+                equipo_id=equipo.id,
+                tipo="calibracion",
+                fecha=nueva_calibracion
+            )
+
+            db.session.add(historial)
 
         # actualizar campos
         equipo.nombre = request.form.get("nombre")
@@ -511,6 +536,22 @@ def cronograma():
         eventos=eventos
     )
 
+@app.route("/historial/<codigo>")
+def historial(codigo):
+
+    if "usuario" not in session:
+        return redirect("/login")
+
+    equipo = Equipo.query.filter_by(codigo=codigo).first()
+
+    if not equipo:
+        return "Equipo no encontrado"
+
+    return render_template(
+        "historial.html",
+        equipo=equipo
+    )
+
 @app.route("/reporte/<codigo>")
 def reporte(codigo):
 
@@ -597,6 +638,7 @@ def reporte(codigo):
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+    db.drop_all()
+    db.create_all()
     app.run(debug=True)
 
