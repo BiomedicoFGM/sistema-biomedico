@@ -405,97 +405,95 @@ def editar(codigo):
 
 @app.route("/cronograma")
 def cronograma():
+
     if "usuario" not in session:
         return redirect("/login")
 
     equipos = Equipo.query.all()
     eventos = []
 
-    from datetime import datetime
-    from dateutil.relativedelta import relativedelta
+    for e in equipos:
 
-for e in equipos:
+        # 🔧 MANTENIMIENTO
+        try:
+            if (
+                e.frecuencia_mantenimiento
+                and e.ultimo_mantenimiento
+                and str(e.ultimo_mantenimiento).strip() != ""
+            ):
 
-    # 🔧 MANTENIMIENTO
-    try:
-        if (
-            e.frecuencia_mantenimiento
-            and e.ultimo_mantenimiento
-            and str(e.ultimo_mantenimiento).strip() != ""
-        ):
+                ultimo = datetime.strptime(
+                    e.ultimo_mantenimiento,
+                    "%Y-%m-%d"
+                ).date()
 
-            ultimo = datetime.strptime(
-                e.ultimo_mantenimiento,
-                "%Y-%m-%d"
-            ).date()
+                proximo = ultimo + relativedelta(
+                    months=e.frecuencia_mantenimiento
+                )
 
-            proximo = ultimo + relativedelta(
-                months=e.frecuencia_mantenimiento
-            )
+                eventos.append({
+                    "codigo": e.codigo,
+                    "nombre": e.nombre,
+                    "tipo": "Mantenimiento",
+                    "fecha": proximo.strftime("%Y-%m-%d"),
+                    "ubicacion": e.ubicacion
+                })
 
-            eventos.append({
-                "codigo": e.codigo,
-                "nombre": e.nombre,
-                "tipo": "Mantenimiento",
-                "fecha": proximo.strftime("%Y-%m-%d"),
-                "ubicacion": e.ubicacion
-            })
+        except Exception as error:
+            print("Error mantenimiento:", error)
 
-    except Exception as error:
-        print("Error mantenimiento:", error)
+        # 📏 CALIBRACIÓN
+        try:
+            if (
+                (e.metrologia or "").lower() == "si"
+                and e.frecuencia_metrologia
+                and e.ultima_calibracion
+                and str(e.ultima_calibracion).strip() != ""
+            ):
 
-    # 📏 CALIBRACIÓN
-    try:
-        if (
-            (e.metrologia or "").lower() == "si"
-            and e.frecuencia_metrologia
-            and e.ultima_calibracion
-            and str(e.ultima_calibracion).strip() != ""
-        ):
+                ultima = datetime.strptime(
+                    e.ultima_calibracion,
+                    "%Y-%m-%d"
+                ).date()
 
-            ultima = datetime.strptime(
-                e.ultima_calibracion,
-                "%Y-%m-%d"
-            ).date()
+                proximo = ultima + relativedelta(
+                    months=e.frecuencia_metrologia
+                )
 
-            proximo = ultima + relativedelta(
-                months=e.frecuencia_metrologia
-            )
+                eventos.append({
+                    "codigo": e.codigo,
+                    "nombre": e.nombre,
+                    "tipo": "Calibración",
+                    "fecha": proximo.strftime("%Y-%m-%d"),
+                    "ubicacion": e.ubicacion
+                })
 
-            eventos.append({
-                "codigo": e.codigo,
-                "nombre": e.nombre,
-                "tipo": "Calibración",
-                "fecha": proximo.strftime("%Y-%m-%d"),
-                "ubicacion": e.ubicacion
-            })
+        except Exception as error:
+            print("Error calibración:", error)
 
-    except Exception as error:
-        print("Error calibración:", error)
+    # 🔎 FILTROS
+    mes = request.args.get("mes")
+    ubicacion = request.args.get("ubicacion")
 
-# 🔎 FILTROS
-mes = request.args.get("mes")
-ubicacion = request.args.get("ubicacion")
+    if mes:
+        eventos = [
+            evento for evento in eventos
+            if evento["fecha"].startswith(mes)
+        ]
 
-if mes:
-    eventos = [
-        evento for evento in eventos
-        if evento["fecha"].startswith(mes)
-    ]
+    if ubicacion:
+        eventos = [
+            evento for evento in eventos
+            if ubicacion.lower() in (evento["ubicacion"] or "").lower()
+        ]
 
-if ubicacion:
-    eventos = [
-        evento for evento in eventos
-        if ubicacion.lower() in (evento["ubicacion"] or "").lower()
-    ]
+    eventos.sort(key=lambda x: x["fecha"])
 
-eventos.sort(key=lambda x: x["fecha"])
+    return render_template(
+        "cronograma.html",
+        eventos=eventos
+    )
 
-return render_template(
-    "cronograma.html",
-    eventos=eventos
-)
-    
 @app.route("/reporte/<codigo>")
 def reporte(codigo):
 
