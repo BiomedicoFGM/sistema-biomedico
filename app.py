@@ -60,6 +60,23 @@ class Equipo(db.Model):
     ultima_calibracion = db.Column(db.String(20))
     observaciones = db.Column(db.Text)
 
+class Historial(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    equipo_id = db.Column(
+        db.Integer,
+        db.ForeignKey("equipo.id")
+    )
+
+    tipo = db.Column(db.String(50))
+    fecha = db.Column(db.String(20))
+    archivo = db.Column(db.String(200))
+
+    equipo = db.relationship(
+        "Equipo",
+        backref="historiales"
+    )    
+
 # ------------------ UTILIDADES ------------------
 
 def calcular_alertas(equipos):
