@@ -1,169 +1,321 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Historial del equipo</title>
+<html lang="es">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Historial del equipo
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
 </head>
 
-<body class="container mt-4">
+<body class="bg-light">
 
-<div class="d-flex gap-2 mb-3">
-    <a href="/" class="btn btn-secondary">⬅ Volver</a>
-    <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
-</div>
+<div class="container py-4">
 
-<h2 class="mb-4">📋 Historial del equipo</h2>
+    <!-- 🔙 NAVEGACIÓN -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
 
-<div class="card mb-4 shadow-sm">
-    <div class="card-body">
-        <h5>{{ equipo.nombre }}</h5>
+        <a href="/"
+           class="btn btn-secondary">
+            ⬅ Volver
+        </a>
 
-        <p class="mb-1"><b>Código:</b> {{ equipo.codigo }}</p>
-        <p class="mb-1"><b>Marca:</b> {{ equipo.marca or '-' }}</p>
-        <p class="mb-1"><b>Modelo:</b> {{ equipo.modelo or '-' }}</p>
-        <p class="mb-1"><b>Ubicación:</b> {{ equipo.ubicacion or '-' }}</p>
-    </div>
-</div>
+        <a href="/logout"
+           class="btn btn-danger">
+            Cerrar sesión
+        </a>
 
-<!-- ➕ NUEVO EVENTO -->
-<div class="card shadow-sm mb-4">
-
-    <div class="card-header bg-dark text-white">
-        Registrar mantenimiento / calibración
     </div>
 
-    <div class="card-body">
+    <!-- 🧾 TÍTULO -->
+    <div class="mb-4">
 
-        <form
-            action="/registrar_evento/{{ equipo.codigo }}"
-            method="post"
-            enctype="multipart/form-data"
-            class="row g-3"
-        >
+        <h2 class="fw-bold">
+            📋 Historial del equipo
+        </h2>
 
-            <div class="col-md-3">
-                <label class="form-label">Tipo</label>
+        <p class="text-muted mb-0">
+            Registro de mantenimientos y calibraciones
+        </p>
 
-                <select name="tipo" class="form-control" required>
-                    <option value="mantenimiento">
-                        🔧 Mantenimiento
-                    </option>
+    </div>
 
-                    {% if (equipo.metrologia or '').lower() == 'si' %}
-                    <option value="calibracion">
-                        📏 Calibración
-                    </option>
+    <!-- 📦 INFO EQUIPO -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+                {{ equipo.nombre or '-' }}
+            </h4>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <p class="mb-2">
+                        <strong>Código:</strong>
+                        {{ equipo.codigo }}
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Marca:</strong>
+                        {{ equipo.marca or '-' }}
+                    </p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <p class="mb-2">
+                        <strong>Modelo:</strong>
+                        {{ equipo.modelo or '-' }}
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Ubicación:</strong>
+                        {{ equipo.ubicacion or '-' }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ➕ REGISTRAR EVENTO -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-dark text-white">
+
+            <strong>
+                Registrar mantenimiento / calibración
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <form
+                action="/registrar_evento/{{ equipo.codigo }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="row g-3"
+            >
+
+                <!-- 🔧 TIPO -->
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Tipo
+                    </label>
+
+                    <select
+                        name="tipo"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="mantenimiento">
+                            🔧 Mantenimiento
+                        </option>
+
+                        {% if (equipo.metrologia or '').lower() == 'si' %}
+
+                        <option value="calibracion">
+                            📏 Calibración
+                        </option>
+
+                        {% endif %}
+
+                    </select>
+
+                </div>
+
+                <!-- 📅 FECHA -->
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Fecha
+                    </label>
+
+                    <input
+                        type="date"
+                        name="fecha"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+                <!-- 📎 PDF -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Certificado PDF
+                    </label>
+
+                    <input
+                        type="file"
+                        name="archivo"
+                        class="form-control"
+                        accept=".pdf"
+                    >
+
+                    <small class="text-muted">
+                        Solo archivos PDF
+                    </small>
+
+                </div>
+
+                <!-- 💾 BOTÓN -->
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+                        Guardar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- 📊 TABLA HISTORIAL -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-primary text-white">
+
+            <strong>
+                Historial registrado
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Fecha</th>
+                        <th>Certificado</th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% if historiales and historiales|length > 0 %}
+
+                        {% for h in historiales %}
+
+                        <tr>
+
+                            <!-- 🔧 TIPO -->
+                            <td>
+
+                                {% if h.tipo == 'mantenimiento' %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        🔧 Mantenimiento
+                                    </span>
+
+                                {% elif h.tipo == 'calibracion' %}
+
+                                    <span class="badge bg-info text-dark">
+                                        📏 Calibración
+                                    </span>
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                            <!-- 📅 FECHA -->
+                            <td>
+                                {{ h.fecha or '-' }}
+                            </td>
+
+                            <!-- 📎 PDF -->
+                            <td>
+
+                                {% if h.archivo %}
+
+                                <a
+                                    href="/uploads/{{ h.archivo }}"
+                                    target="_blank"
+                                    class="btn btn-success btn-sm"
+                                >
+                                    📄 Ver PDF
+                                </a>
+
+                                {% else %}
+
+                                <span class="text-muted">
+                                    Sin archivo
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="3"
+                                class="text-center text-muted py-4">
+
+                                Sin historial registrado
+
+                            </td>
+
+                        </tr>
+
                     {% endif %}
-                </select>
+
+                    </tbody>
+
+                </table>
+
             </div>
 
-            <div class="col-md-3">
-                <label class="form-label">Fecha</label>
-
-                <input
-                    type="date"
-                    name="fecha"
-                    class="form-control"
-                    required
-                >
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Certificado PDF</label>
-
-                <input
-                    type="file"
-                    name="archivo"
-                    class="form-control"
-                    accept="application/pdf"
-                >
-            </div>
-
-            <div class="col-md-2 d-flex align-items-end">
-                <button class="btn btn-primary w-100">
-                    Guardar
-                </button>
-            </div>
-
-        </form>
+        </div>
 
     </div>
-
-</div>
-
-<!-- 📊 HISTORIAL -->
-<div class="table-responsive">
-
-<table class="table table-bordered table-striped align-middle">
-
-<thead class="table-dark">
-<tr>
-    <th>Tipo</th>
-    <th>Fecha</th>
-    <th>Certificado</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% if historiales and historiales|length > 0 %}
-
-    {% for h in historiales %}
-    <tr>
-
-        <td>
-            {% if h.tipo == 'mantenimiento' %}
-                🔧 Mantenimiento
-            {% elif h.tipo == 'calibracion' %}
-                📏 Calibración
-            {% else %}
-                -
-            {% endif %}
-        </td>
-
-        <td>
-            {{ h.fecha or '-' }}
-        </td>
-
-        <td>
-            {% if h.archivo %}
-
-                <a
-                    href="/uploads/{{ h.archivo }}"
-                    target="_blank"
-                    class="btn btn-success btn-sm"
-                >
-                    Ver PDF
-                </a>
-
-            {% else %}
-
-                <span class="text-muted">
-                    Sin archivo
-                </span>
-
-            {% endif %}
-        </td>
-
-    </tr>
-    {% endfor %}
-
-{% else %}
-
-<tr>
-    <td colspan="3" class="text-center">
-        Sin historial registrado
-    </td>
-</tr>
-
-{% endif %}
-
-</tbody>
-
-</table>
 
 </div>
 
 </body>
+
 </html>
