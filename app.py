@@ -587,26 +587,26 @@ def registrar_evento(codigo):
 
     nombre_archivo = None
 
+# 📎 guardar PDF
 if archivo and archivo.filename:
 
+    # ✅ validar PDF
     if not archivo.filename.lower().endswith(".pdf"):
         return "Solo se permiten archivos PDF"
 
-    # 📎 guardar PDF
-    if archivo and archivo.filename:
+    # ✅ nombre único
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-
-        nombre_archivo = (
+    nombre_archivo = (
         f"{timestamp}_{secure_filename(archivo.filename)}"
-        )
+    )
 
-        ruta = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            nombre_archivo
-        )
+    ruta = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        nombre_archivo
+    )
 
-        archivo.save(ruta)
+    archivo.save(ruta)
 
     # 🧾 crear historial
     nuevo_historial = Historial(
