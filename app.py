@@ -580,6 +580,7 @@ def registrar_evento(codigo):
     if not equipo:
         return "Equipo no encontrado"
 
+    # 📥 datos formulario
     tipo = request.form.get("tipo")
     fecha = request.form.get("fecha")
 
@@ -587,26 +588,26 @@ def registrar_evento(codigo):
 
     nombre_archivo = None
 
-# 📎 guardar PDF
-if archivo and archivo.filename:
+    # 📎 validar y guardar PDF
+    if archivo and archivo.filename:
 
-    # ✅ validar PDF
-    if not archivo.filename.lower().endswith(".pdf"):
-        return "Solo se permiten archivos PDF"
+        # solo PDF
+        if not archivo.filename.lower().endswith(".pdf"):
+            return "Solo se permiten archivos PDF"
 
-    # ✅ nombre único
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        # nombre único
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
-    nombre_archivo = (
-        f"{timestamp}_{secure_filename(archivo.filename)}"
-    )
+        nombre_archivo = (
+            f"{timestamp}_{secure_filename(archivo.filename)}"
+        )
 
-    ruta = os.path.join(
-        app.config["UPLOAD_FOLDER"],
-        nombre_archivo
-    )
+        ruta = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            nombre_archivo
+        )
 
-    archivo.save(ruta)
+        archivo.save(ruta)
 
     # 🧾 crear historial
     nuevo_historial = Historial(
