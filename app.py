@@ -298,18 +298,21 @@ def inicio():
 
     equipos = calcular_alertas(equipos)
 
-    # 🔧 CONTADORES
+    # 🔧 CONTADORES MANTENIMIENTO
     rojos = sum(1 for e in equipos if e.alerta == "rojo")
     amarillos = sum(1 for e in equipos if e.alerta == "amarillo")
     verdes = sum(1 for e in equipos if e.alerta == "verde")
     grises = sum(1 for e in equipos if e.alerta == "gris")
 
-    # 📏 METROLOGÍA
+    # 📏 CONTADORES METROLOGÍA
     rojos_m = sum(1 for e in equipos if e.alerta_metro == "rojo")
     amarillos_m = sum(1 for e in equipos if e.alerta_metro == "amarillo")
     verdes_m = sum(1 for e in equipos if e.alerta_metro == "verde")
 
-    return render_template("index.html",
+    total_equipos = len(equipos)
+
+    return render_template(
+        "index.html",
         equipos=equipos,
         rojos=rojos,
         amarillos=amarillos,
@@ -317,7 +320,8 @@ def inicio():
         grises=grises,
         rojos_m=rojos_m,
         amarillos_m=amarillos_m,
-        verdes_m=verdes_m
+        verdes_m=verdes_m,
+        total_equipos=total_equipos
     )
 
 # ------------------ CRUD ------------------

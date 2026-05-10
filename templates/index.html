@@ -26,21 +26,92 @@
 <a href="/cronograma" class="btn btn-primary mb-3">📅 Ver cronograma</a>
 
 <!-- 🔧 DASHBOARD -->
-<h4>🔧 Mantenimiento</h4>
+<div class="row g-3 mb-4">
 
-<div class="row mb-4 text-center">
-    <div class="col"><div class="alert alert-danger">🔴 {{ rojos }}<br>Vencidos</div></div>
-    <div class="col"><div class="alert alert-warning">🟡 {{ amarillos }}<br>Próximos</div></div>
-    <div class="col"><div class="alert alert-success">🟢 {{ verdes }}<br>Al día</div></div>
-    <div class="col"><div class="alert alert-secondary">⚪ {{ grises }}<br>Sin fecha</div></div>
+    <!-- TOTAL -->
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-dark text-white">
+            <div class="card-body text-center">
+                <h6>Total equipos</h6>
+                <h2>{{ total_equipos }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANTENIMIENTO VENCIDO -->
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-danger text-white">
+            <div class="card-body text-center">
+                <h6>Mantenimiento vencido</h6>
+                <h2>{{ rojos }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANTENIMIENTO PRÓXIMO -->
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-warning text-dark">
+            <div class="card-body text-center">
+                <h6>Mantenimiento próximo</h6>
+                <h2>{{ amarillos }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANTENIMIENTO OK -->
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-success text-white">
+            <div class="card-body text-center">
+                <h6>Mantenimiento OK</h6>
+                <h2>{{ verdes }}</h2>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<h4>📏 Metrología</h4>
+<!-- 📏 METROLOGÍA -->
+<div class="row g-3 mb-4">
 
-<div class="row mb-4 text-center">
-    <div class="col"><div class="alert alert-danger">🔴 {{ rojos_m }}<br>Vencidos</div></div>
-    <div class="col"><div class="alert alert-warning">🟡 {{ amarillos_m }}<br>Próximos</div></div>
-    <div class="col"><div class="alert alert-success">🟢 {{ verdes_m }}<br>Al día</div></div>
+    <div class="col-md-4">
+        <div class="card shadow border-0 bg-danger text-white">
+            <div class="card-body text-center">
+                <h6>Calibración vencida</h6>
+                <h2>{{ rojos_m }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0 bg-warning text-dark">
+            <div class="card-body text-center">
+                <h6>Calibración próxima</h6>
+                <h2>{{ amarillos_m }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0 bg-success text-white">
+            <div class="card-body text-center">
+                <h6>Calibración OK</h6>
+                <h2>{{ verdes_m }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="d-flex gap-2 mb-4">
+
+    <a href="/cronograma" class="btn btn-primary">
+        📅 Ver cronograma
+    </a>
+
+    <a href="/logout" class="btn btn-danger">
+        🚪 Cerrar sesión
+    </a>
+
 </div>
 
 <!-- 🔥 FORMULARIO -->
