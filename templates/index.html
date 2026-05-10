@@ -19,8 +19,6 @@
 
 <body class="container mt-4">
 
-<a href="/logout" class="btn btn-danger mb-3">Cerrar sesión</a>
-
 <h1 class="mb-4">Inventario Biomédico</h1>
 
 <a href="/cronograma" class="btn btn-primary mb-3">📅 Ver cronograma</a>
@@ -267,10 +265,36 @@
 {% endif %}
 </td>
 
-<td>
-    <a class="btn btn-warning btn-sm" href="/editar/{{ e.codigo }}">Editar</a>
-    <a class="btn btn-danger btn-sm" href="/eliminar/{{ e.codigo }}">Eliminar</a>
-    <a class="btn btn-dark btn-sm" href="/reporte/{{ e.codigo }}">PDF</a>
+<td class="d-flex flex-wrap gap-1">
+
+    <a
+        class="btn btn-warning btn-sm"
+        href="/editar/{{ e.codigo }}"
+    >
+        ✏ Editar
+    </a>
+
+    <a
+        class="btn btn-danger btn-sm"
+        href="/eliminar/{{ e.codigo }}"
+    >
+        🗑 Eliminar
+    </a>
+
+    <a
+        class="btn btn-dark btn-sm"
+        href="/reporte/{{ e.codigo }}"
+    >
+        📄 PDF
+    </a>
+
+    <a
+        class="btn btn-primary btn-sm"
+        href="/historial/{{ e.codigo }}"
+    >
+        📋 Historial
+    </a>
+
 </td>
 
 </tr>
