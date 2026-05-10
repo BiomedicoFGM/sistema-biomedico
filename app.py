@@ -287,6 +287,14 @@ def logout():
     session.clear()
     return redirect("/login")
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(
+        app.config['UPLOAD_FOLDER'],
+        filename
+    )
+
+
 # ------------------ INICIO ------------------
 
 @app.route("/")
@@ -555,6 +563,59 @@ def historial(codigo):
         "historial.html",
         equipo=equipo
     )
+
+@app.route("/registrar_evento/<codigo>", methods=["POST"])
+def registrar_evento(codigo):
+
+    if "usuario" not in session:
+        return redirect("/login")
+
+    equipo = Equipo.query.filter_by(codigo=codigo).first()
+
+    if not equipo:
+        return "Equipo no encontrado"
+
+    tipo = request.form.get("tipo")
+    fecha = request.form.get("fecha")
+
+    archivo = request.files.get("archivo")
+
+    nombre_archivo = None
+
+    # 📎 guardar PDF
+    if archivo and archivo.filename:
+
+        nombre_archivo = secure_filename(archivo.filename)
+
+        ruta = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            nombre_archivo
+        )
+
+        archivo.save(ruta)
+
+    # 🧾 crear historial
+    nuevo_historial = Historial(
+        equipo_id=equipo.id,
+        tipo=tipo,
+        fecha=fecha,
+        archivo=nombre_archivo
+    )
+
+    db.session.add(nuevo_historial)
+
+    # 🔧 actualizar mantenimiento
+    if tipo == "mantenimiento":
+        equipo.ultimo_mantenimiento = fecha
+
+    # 📏 actualizar calibración
+    elif tipo == "calibracion":
+        equipo.ultima_calibracion = fecha
+
+    db.session.commit()
+
+    return redirect(f"/historial/{codigo}")
+
 
 @app.route("/reporte/<codigo>")
 def reporte(codigo):

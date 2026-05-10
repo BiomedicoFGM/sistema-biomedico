@@ -2,31 +2,100 @@
 <html>
 <head>
     <title>Historial del equipo</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="container mt-4">
 
-<!-- 🔙 NAVEGACIÓN -->
 <div class="d-flex gap-2 mb-3">
     <a href="/" class="btn btn-secondary">⬅ Volver</a>
     <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
 </div>
 
-<!-- 🧾 INFO EQUIPO -->
-<h2 class="mb-3">Historial del equipo</h2>
+<h2 class="mb-4">📋 Historial del equipo</h2>
 
-<div class="mb-4">
-    <strong>Código:</strong> {{ equipo.codigo }} <br>
-    <strong>Nombre:</strong> {{ equipo.nombre or "-" }} <br>
-    <strong>Marca:</strong> {{ equipo.marca or "-" }} <br>
-    <strong>Modelo:</strong> {{ equipo.modelo or "-" }}
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <h5>{{ equipo.nombre }}</h5>
+
+        <p class="mb-1"><b>Código:</b> {{ equipo.codigo }}</p>
+        <p class="mb-1"><b>Marca:</b> {{ equipo.marca or '-' }}</p>
+        <p class="mb-1"><b>Modelo:</b> {{ equipo.modelo or '-' }}</p>
+        <p class="mb-1"><b>Ubicación:</b> {{ equipo.ubicacion or '-' }}</p>
+    </div>
 </div>
 
-<!-- 📊 TABLA HISTORIAL -->
+<!-- ➕ NUEVO EVENTO -->
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header bg-dark text-white">
+        Registrar mantenimiento / calibración
+    </div>
+
+    <div class="card-body">
+
+        <form
+            action="/registrar_evento/{{ equipo.codigo }}"
+            method="post"
+            enctype="multipart/form-data"
+            class="row g-3"
+        >
+
+            <div class="col-md-3">
+                <label class="form-label">Tipo</label>
+
+                <select name="tipo" class="form-control" required>
+                    <option value="mantenimiento">
+                        🔧 Mantenimiento
+                    </option>
+
+                    {% if (equipo.metrologia or '').lower() == 'si' %}
+                    <option value="calibracion">
+                        📏 Calibración
+                    </option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Fecha</label>
+
+                <input
+                    type="date"
+                    name="fecha"
+                    class="form-control"
+                    required
+                >
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Certificado PDF</label>
+
+                <input
+                    type="file"
+                    name="archivo"
+                    class="form-control"
+                    accept="application/pdf"
+                >
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100">
+                    Guardar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- 📊 HISTORIAL -->
 <div class="table-responsive">
 
-<table class="table table-bordered table-striped">
+<table class="table table-bordered table-striped align-middle">
 
 <thead class="table-dark">
 <tr>
@@ -43,7 +112,6 @@
     {% for h in equipo.historiales|reverse %}
     <tr>
 
-        <!-- 🔧 TIPO -->
         <td>
             {% if h.tipo == 'mantenimiento' %}
                 🔧 Mantenimiento
@@ -54,41 +122,41 @@
             {% endif %}
         </td>
 
-        <!-- 📅 FECHA -->
-        <td>{{ h.fecha or "-" }}</td>
-
-        <!-- 📎 CERTIFICADO -->
         <td>
+            {{ h.fecha or '-' }}
+        </td>
 
+        <td>
             {% if h.archivo %}
-                <a class="btn btn-success btn-sm"
-                   href="/uploads/{{ h.archivo }}" target="_blank">
-                   Ver archivo
+
+                <a
+                    href="/uploads/{{ h.archivo }}"
+                    target="_blank"
+                    class="btn btn-success btn-sm"
+                >
+                    Ver PDF
                 </a>
+
             {% else %}
-                <span class="text-muted">Sin archivo</span>
+
+                <span class="text-muted">
+                    Sin archivo
+                </span>
+
             {% endif %}
-
-            <!-- SUBIR -->
-            <form action="/subir_certificado/{{ h.id }}"
-                  method="post"
-                  enctype="multipart/form-data"
-                  class="mt-2">
-
-                <input type="file" name="archivo" class="form-control form-control-sm" required>
-                <button class="btn btn-primary btn-sm mt-1">Subir</button>
-
-            </form>
-
         </td>
 
     </tr>
     {% endfor %}
 
 {% else %}
-    <tr>
-        <td colspan="3" class="text-center">Sin historial registrado</td>
-    </tr>
+
+<tr>
+    <td colspan="3" class="text-center">
+        Sin historial registrado
+    </td>
+</tr>
+
 {% endif %}
 
 </tbody>
