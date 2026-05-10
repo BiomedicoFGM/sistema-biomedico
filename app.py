@@ -558,12 +558,17 @@ def historial(codigo):
 
     if not equipo:
         return "Equipo no encontrado"
+    
+    historiales = Historial.query.filter_by(
+    equipo_id=equipo.id
+    ).order_by(Historial.fecha.desc()).all()
 
     return render_template(
-        "historial.html",
-        equipo=equipo
+    "historial.html",
+    equipo=equipo,
+    historiales=historiales
     )
-
+  
 @app.route("/registrar_evento/<codigo>", methods=["POST"])
 def registrar_evento(codigo):
 
@@ -582,10 +587,19 @@ def registrar_evento(codigo):
 
     nombre_archivo = None
 
+if archivo and archivo.filename:
+
+    if not archivo.filename.lower().endswith(".pdf"):
+        return "Solo se permiten archivos PDF"
+
     # 📎 guardar PDF
     if archivo and archivo.filename:
 
-        nombre_archivo = secure_filename(archivo.filename)
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+        nombre_archivo = (
+        f"{timestamp}_{secure_filename(archivo.filename)}"
+        )
 
         ruta = os.path.join(
             app.config["UPLOAD_FOLDER"],
