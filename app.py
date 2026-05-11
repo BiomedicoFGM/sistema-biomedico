@@ -10,6 +10,9 @@ from reportlab.lib.styles import getSampleStyleSheet
 import os
 import json
 import shutil
+import pandas as pd
+from flask import send_file
+
 
 # ------------------ CONFIG ------------------
 
@@ -547,6 +550,140 @@ def cronograma():
         "cronograma.html",
         eventos=eventos
     )
+
+@app.route("/exportar_excel")
+def exportar_excel():
+
+    if "usuario" not in session:
+        return redirect("/login")
+
+    equipos = Equipo.query.all()
+
+    datos = []
+
+    for e in equipos:
+
+        datos.append({
+            "Código": e.codigo,
+            "Nombre": e.nombre,
+            "Marca": e.marca,
+            "Modelo": e.modelo,
+            "Serie": e.serie,
+            "Ubicación": e.ubicacion,
+            "Clase": e.clase,
+            "INVIMA": e.invima,
+            "Fecha compra": e.fecha_compra,
+            "Proveedor": e.proveedor,
+            "Fecha instalación": e.fecha_instalacion,
+            "Frecuencia mantenimiento": e.frecuencia_mantenimiento,
+            "Último mantenimiento": e.ultimo_mantenimiento,
+            "Metrología": e.metrologia,
+            "Frecuencia metrología": e.frecuencia_metrologia,
+            "Última calibración": e.ultima_calibracion,
+            "Observaciones": e.observaciones
+        })
+
+    df = pd.DataFrame(datos)
+
+    carpeta = "/tmp"
+
+    archivo = os.path.join(
+        carpeta,
+        "inventario_biomedico.xlsx"
+    )
+
+    df.to_excel(archivo, index=False)
+
+    return send_file(
+        archivo,
+        as_attachment=True
+    )
+
+@app.route("/exportar_cronograma")
+def exportar_cronograma():
+
+    if "usuario" not in session:
+        return redirect("/login")
+
+    equipos = Equipo.query.all()
+
+    eventos = []
+
+    for e in equipos:
+
+        # 🔧 MANTENIMIENTO
+        try:
+            if (
+                e.frecuencia_mantenimiento
+                and e.ultimo_mantenimiento
+            ):
+
+                ultimo = datetime.strptime(
+                    e.ultimo_mantenimiento,
+                    "%Y-%m-%d"
+                ).date()
+
+                proximo = ultimo + relativedelta(
+                    months=e.frecuencia_mantenimiento
+                )
+
+                eventos.append({
+                    "Tipo": "Mantenimiento",
+                    "Código": e.codigo,
+                    "Equipo": e.nombre,
+                    "Ubicación": e.ubicacion,
+                    "Fecha programada": proximo.strftime("%Y-%m-%d")
+                })
+
+        except:
+            pass
+
+        # 📏 CALIBRACIÓN
+        try:
+            if (
+                (e.metrologia or "").lower() == "si"
+                and e.frecuencia_metrologia
+                and e.ultima_calibracion
+            ):
+
+                ultima = datetime.strptime(
+                    e.ultima_calibracion,
+                    "%Y-%m-%d"
+                ).date()
+
+                proximo = ultima + relativedelta(
+                    months=e.frecuencia_metrologia
+                )
+
+                eventos.append({
+                    "Tipo": "Calibración",
+                    "Código": e.codigo,
+                    "Equipo": e.nombre,
+                    "Ubicación": e.ubicacion,
+                    "Fecha programada": proximo.strftime("%Y-%m-%d")
+                })
+
+        except:
+            pass
+
+    eventos.sort(key=lambda x: x["Fecha programada"])
+
+    df = pd.DataFrame(eventos)
+
+    carpeta = "/tmp"
+
+    archivo = os.path.join(
+        carpeta,
+        "cronograma_biomedico.xlsx"
+    )
+
+    df.to_excel(archivo, index=False)
+
+    return send_file(
+        archivo,
+        as_attachment=True
+    )
+
 
 @app.route("/historial/<codigo>")
 def historial(codigo):
