@@ -872,7 +872,23 @@ def reporte(codigo):
 # ------------------ RUN ------------------
 
 with app.app_context():
+
     db.create_all()
+
+    try:
+        db.session.execute(
+            db.text(
+                "ALTER TABLE usuario ADD COLUMN rol VARCHAR(20)"
+            )
+        )
+
+        db.session.commit()
+
+        print("✅ Columna rol creada")
+
+    except Exception as e:
+        print("⚠️ La columna rol ya existe")
+        print(e)
 
 if __name__ == "__main__":
     app.run(debug=True)
