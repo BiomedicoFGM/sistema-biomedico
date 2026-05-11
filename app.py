@@ -872,11 +872,6 @@ def reporte(codigo):
 # ------------------ RUN ------------------
 
 with app.app_context():
-
-    Usuario.__table__.drop(db.engine)
-
-    Usuario.__table__.create(db.engine)
-
     db.create_all()
 
 if __name__ == "__main__":
