@@ -40,8 +40,20 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    usuario = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(200))
+
+    usuario = db.Column(
+        db.String(50),
+        unique=True
+    )
+
+    password = db.Column(
+        db.String(200)
+    )
+
+    rol = db.Column(
+        db.String(20),
+        default="tecnico"
+    )
 
 class Equipo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -259,6 +271,7 @@ def login():
 
         if user and check_password_hash(user.password, request.form["password"]):
             session["usuario"] = user.usuario
+            session["rol"] = user.rol
             return redirect("/")
 
         return "Credenciales incorrectas"
@@ -275,7 +288,12 @@ def registro():
 
         nuevo = Usuario(
             usuario=usuario,
-            password=generate_password_hash(request.form["password"])
+
+            password=generate_password_hash(
+                request.form["password"]
+            ),
+
+            rol="admin"
         )
 
         db.session.add(nuevo)
