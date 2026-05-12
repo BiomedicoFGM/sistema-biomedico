@@ -29,6 +29,20 @@
         Control de inventario, mantenimiento y metrología
     </p>
 
+    <p class="text-muted">
+
+    Usuario:
+    <strong>{{ session["usuario"] }}</strong>
+
+    |
+
+    Rol:
+    <strong class="text-uppercase">
+        {{ session["rol"] }}
+    </strong>
+
+</p>
+
 </div>
 
 <a href="/cronograma" class="btn btn-primary mb-3">📅 Ver cronograma</a>
@@ -299,6 +313,7 @@
 
 <td class="d-flex flex-wrap gap-1">
 
+    
     <a
         class="btn btn-warning btn-sm"
         href="/editar/{{ e.codigo }}"
@@ -306,12 +321,17 @@
         ✏ Editar
     </a>
 
+    
+    {% if session["rol"] == "admin" %}
+
     <a
         class="btn btn-danger btn-sm"
         href="/eliminar/{{ e.codigo }}"
     >
         🗑 Eliminar
     </a>
+
+    {% endif %}
 
     <a
         class="btn btn-dark btn-sm"
