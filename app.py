@@ -293,7 +293,7 @@ def registro():
                 request.form["password"]
             ),
 
-            rol="admin"
+            rol=request.form["rol"]
         )
 
         db.session.add(nuevo)
